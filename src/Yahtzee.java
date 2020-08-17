@@ -1,10 +1,18 @@
 import java.util.Scanner;
+import java.util.Random;
+import java.util.Scanner;
 
 public class Yahtzee {
     private final static String WELCOME_MESSAGE = "WELCOME TO YAHTZEE!\n" +
             "===============================";
     private final static String GOODBYE_MESSAGE = "===============================\n" +
             "THANK YOU FOR PLAYING YAHTZEE!";
+    private final static String postRollPrompt = "What would you like to do?\n" +
+            "1. Roll again\n" +
+            "2. Save/unsave a die\n";
+    private final static String PROMPT_SAVE_DIE = "Which die would you like to save? (You can only save one at a time)\n";
+
+    static Random rand = new Random();
 
     /**
      * This method is responsible for everything from displaying the opening
@@ -19,7 +27,40 @@ public class Yahtzee {
         System.out.println(WELCOME_MESSAGE);
         System.out.println();
 
-        
+        // Initialize values
+        int rollsRemaining = 0; // number of rolls remaining this turn
+
+        int[] roll = new int[5]; // array to store the values of the dice
+        boolean[] rollSaved = new boolean[5]; // array to store whether each die is being saved or rolled
+
+        int[] scoreboard = createScoreBoard(); // create the scoreboard
+        boolean[] scoreboardUsed = createScoreboardUsed(); // create the array to track which sections have been used
+
+        Scanner in = new Scanner(System.in);
+        int inputInt = 0;
+        int inputIntNestedLoop = 0;
+
+        while(countTurnsRemaining(scoreboardUsed) > 0){ // loop while there are turns remaining
+            rollsRemaining = 3; // You get three rolls per turn
+            while(rollsRemaining > 0){
+                // Do the roll and print the result
+                roll = doRoll(roll, rollSaved);
+                printRoll(roll, rollSaved);
+
+                inputInt = readValidInt(1, 2, postRollPrompt, in);
+
+                while(inputInt != 1){ // While the user doesn't want to roll again
+                    inputIntNestedLoop = readValidInt(0, 5, PROMPT_SAVE_DIE, in);
+                    rollSaved[inputIntNestedLoop] = !rollSaved[inputIntNestedLoop];
+                    printRoll(roll, rollSaved);
+                    inputInt = readValidInt(1, 2, postRollPrompt, in);
+                }
+
+                rollsRemaining--;
+            }
+
+            // Player has rolled all three times
+        }
 
 
     }
@@ -121,7 +162,35 @@ public class Yahtzee {
         System.out.println("Yahtzee bonus: " + scoreboard[14]);
         System.out.println("Top half total: " + partialSum(0, 6, scoreboard));
         System.out.println("Bottom half total: " + partialSum(7, 14, scoreboard));
+        System.out.println("Final total: " + partialSum(0, 14, scoreboard));
 
+        System.out.println();
+    }
+
+    /**
+     * Prints out the current roll and which dice are being saved
+     *
+     * @param roll Array of the integer values of the dice
+     * @param saved Array saying which dice are being saved
+     */
+    public static void printRoll(int[] roll, boolean[] saved){
+        for(int i = 0; i < roll.length; i++){
+            System.out.print(i);
+        }
+        System.out.println();
+
+        for(int i = 0; i < roll.length; i++){
+            System.out.print(roll[i]);
+        }
+        System.out.println();
+
+        for(int i = 0; i < roll.length; i++){
+            if(saved[i]){
+                System.out.print("S");
+            } else {
+                System.out.print("N");
+            }
+        }
         System.out.println();
     }
 
@@ -160,5 +229,22 @@ public class Yahtzee {
             }
         }
         return turnsRemaining;
+    }
+
+    /**
+     * Does the random rolling of each "die" that isn't saved
+     *
+     * @param roll The previous roll value (only needed to preserve saved dice)
+     * @param saved Array representing which dice are being saved
+     * @return New roll array with random roll for each non-saved die
+     */
+    public static int[] doRoll(int[] roll, boolean[] saved){
+        for(int i = 0; i < roll.length; i++){ // Step through each value in the roll
+            if(!saved[i]){ // If that die isn't being saved
+                roll[i] = rand.nextInt(6) + 1; // Generates random number from 0-5 then add 1 to represent true dice
+            }
+        }
+
+        return roll;
     }
 }
