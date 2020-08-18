@@ -59,7 +59,7 @@ public class Yahtzee {
                 rollsRemaining--;
             }
 
-            // Player has rolled all three times
+            // Player has rolled all three times, so allow them to choose which scorecard section they want to use
         }
 
 
@@ -246,5 +246,89 @@ public class Yahtzee {
         }
 
         return roll;
+    }
+
+    public static int[] returnPossibleScoreValues(int[] roll, boolean[] scoreboardUsed){
+        int[] numDice = new int[6];
+
+        int[] possibleScores = new int[15];
+        possibleScores[6] = -1;
+
+        // Count the number of each number in the roll
+        for(int i = 0; i < roll.length; i++){
+            switch (roll[i]){
+                case 1:
+                    numDice[0]++;
+                    break;
+                case 2:
+                    numDice[1]++;
+                    break;
+                case 3:
+                    numDice[2]++;
+                    break;
+                case 4:
+                    numDice[3]++;
+                    break;
+                case 5:
+                    numDice[4]++;
+                    break;
+                case 6:
+                    numDice[5]++;
+                    break;
+            }
+        }
+
+        // Determine the possible point values for the top six scores (aces through sixes)
+        for(int i = 0; i < 6; i++){
+            if(!scoreboardUsed[i]){
+                possibleScores[i] = numDice[i] * (i+1);
+            } else {
+                possibleScores[i] = -1;
+            }
+        }
+
+        // Determine point values for the other boxes
+
+        if(!scoreboardUsed[7]){ // Three of a kind
+            for(int i = 0; i < 6; i++){
+                if(numDice[i] >= 3){
+                    possibleScores[7] = numDice[i] * (i+1);
+                }
+            }
+        } else {
+            possibleScores[7] = -1;
+        }
+
+        if(!scoreboardUsed[8]){ // Four of a kind
+            for(int i = 0; i < 6; i++){
+                if(numDice[i] >= 4){
+                    possibleScores[8] = numDice[i] * (i+1);
+                }
+            }
+        } else {
+            possibleScores[8] = -1;
+        }
+
+        if(!scoreboardUsed[9]){ // Full house
+            boolean twoOfAKind = false;
+            boolean threeOfAKind = false;
+            for(int i = 0; i < 6; i++){
+                if(numDice[i] == 3){
+                    threeOfAKind = true;
+                } else if (numDice[i] == 2){
+                    twoOfAKind = true;
+                }
+            }
+
+            if(threeOfAKind && twoOfAKind){
+                possibleScores[9] = 25;
+            } else {
+                possibleScores[9] = -1;
+            }
+        } else {
+            possibleScores[9] = -1;
+        }
+
+        return possibleScores;
     }
 }
