@@ -329,6 +329,53 @@ public class Yahtzee {
             possibleScores[9] = -1;
         }
 
+        if(!scoreboardUsed[10]){ // Small straight
+            if(numDice[2] > 0 && numDice[3] > 0){ // Small straight needs at least one 3 and one 4
+                if(numDice[0] > 0 && numDice[1] > 0){ // 1-4 straight
+                    possibleScores[10] = 30;
+                } else if(numDice[1] > 0 && numDice[4] > 0) { // 2-5 straight
+                    possibleScores[10] = 30;
+                } else if(numDice[4] > 0 && numDice[5] > 0){ // 3-6 straight
+                    possibleScores[10] = 30;
+                }
+            }
+        } else {
+            possibleScores[10] = -1;
+        }
+
+        if(!scoreboardUsed[11]){ // Large straight
+            if(numDice[1] > 0 && numDice[2] > 0 && numDice[3] > 0 && numDice[4] > 0){ // Lg straight needs at least one 2, 3, 4, and 5
+                if(numDice[0] > 0 || numDice[5] > 0){ // 1-5 or 2-6 straight
+                    possibleScores[11] = 40;
+                }
+            }
+        } else {
+            possibleScores[11] = -1;
+        }
+
+        if(!scoreboardUsed[12]){ // Yahtzee & bonus
+            for(int i = 0; i < 6; i++){ // Check each die number
+                if(numDice[i] == 5){
+                    possibleScores[12] = 50;
+                }
+            }
+        } else {
+            possibleScores[12] = -1;
+            for(int i = 0; i < 6; i++){ // Check each die number
+                if(numDice[i] == 5){
+                    possibleScores[14] = 100;
+                }
+            }
+        }
+
+        if(!scoreboardUsed[13]){ // Chance
+            for(int i = 0; i < 6; i++){
+                possibleScores[13] += numDice[i] * (i+1);
+            }
+        } else {
+            possibleScores[13] = -1;
+        }
+
         return possibleScores;
     }
 }
