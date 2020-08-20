@@ -59,6 +59,7 @@ public class Yahtzee {
                 rollsRemaining--;
             }
 
+            printPossibleScores(roll, scoreboardUsed);
             // Player has rolled all three times, so allow them to choose which scorecard section they want to use
         }
 
@@ -248,11 +249,19 @@ public class Yahtzee {
         return roll;
     }
 
+    /**
+     * Calculates the possible score values for the current roll and returns that as an array the same size and indices as the scoreboard array
+     *
+     * @param roll Array representing the dice roll
+     * @param scoreboardUsed Array representing whether each slot on the scoreboard has been used or not
+     * @return Array representing possible point values for each slot on the scorecard based on the current roll (-1 represents a slot that has already been used)
+     */
     public static int[] returnPossibleScoreValues(int[] roll, boolean[] scoreboardUsed){
         int[] numDice = new int[6];
 
         int[] possibleScores = new int[15];
         possibleScores[6] = -1;
+        possibleScores[14] = -1;
 
         // Count the number of each number in the roll
         for(int i = 0; i < roll.length; i++){
@@ -377,5 +386,24 @@ public class Yahtzee {
         }
 
         return possibleScores;
+    }
+
+    /**
+     * Prints the possible score values to the terminal with an identifier so that the player can choose which they want to pick
+     *
+     * @param roll Array representing current dice roll
+     * @param scoreboardUsed Array representing whether each score card box has been used or not
+     */
+    public static void printPossibleScores(int[] roll, boolean[] scoreboardUsed){
+        int[] possibleScores = returnPossibleScoreValues(roll, scoreboardUsed); // Get the possible score values
+        String[] scoreMeanings = new String[] {"Ones", "Twos", "Threes", "Fours", "Fives", "Sixes", "Top bonus", "3 of a kind", "4 of a kind", "Full house", "Small straight",
+        "Large straight", "Yahtzee", "Chance", "Yahtzee bonus"};
+
+        System.out.println("Possible scores from your roll: (Note: only slots you haven't used will be shown)");
+        for(int i = 0; i < possibleScores.length; i++){
+            if(possibleScores[i] != -1){
+                System.out.println(i + ": " + scoreMeanings[i] + ": " + possibleScores[i]);
+            }
+        }
     }
 }
