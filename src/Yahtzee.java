@@ -62,6 +62,7 @@ public class Yahtzee {
                 rollsRemaining--;
             }
 
+            // Select the score to put on the scoreboard
             printPossibleScores(roll, scoreboardUsed);
             possibleScores = returnPossibleScoreValues(roll, scoreboardUsed);
             inputInt = readValidInt(0, 14, "Please input which score you would like to use: ", in);
@@ -69,13 +70,17 @@ public class Yahtzee {
                 inputInt = readValidInt(0, 14, "Please input which score you would like to use: ", in);
             }
 
+            // Put the score onto the scoreboard
             scoreboard[inputInt] = possibleScores[inputInt];
             scoreboardUsed[inputInt] = true;
 
             displayScoreBoard(scoreboard);
+
+            // Do the top bonus
+            if(partialSum(0,5, scoreboard) >= 63){
+                scoreboard[6] = 35;
+            }
         }
-
-
     }
 
     /**
