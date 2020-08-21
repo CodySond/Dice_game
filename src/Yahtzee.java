@@ -36,6 +36,9 @@ public class Yahtzee {
         int[] scoreboard = createScoreBoard(); // create the scoreboard
         boolean[] scoreboardUsed = createScoreboardUsed(); // create the array to track which sections have been used
 
+        int[] possibleScores = new int[15];
+        boolean validScoreSelection = true;
+
         Scanner in = new Scanner(System.in);
         int inputInt = 0;
         int inputIntNestedLoop = 0;
@@ -60,7 +63,16 @@ public class Yahtzee {
             }
 
             printPossibleScores(roll, scoreboardUsed);
-            // Player has rolled all three times, so allow them to choose which scorecard section they want to use
+            possibleScores = returnPossibleScoreValues(roll, scoreboardUsed);
+            inputInt = readValidInt(0, 14, "Please input which score you would like to use: ", in);
+            while(possibleScores[inputInt] == -1){ // Validate the score selection
+                inputInt = readValidInt(0, 14, "Please input which score you would like to use: ", in);
+            }
+
+            scoreboard[inputInt] = possibleScores[inputInt];
+            scoreboardUsed[inputInt] = true;
+
+            displayScoreBoard(scoreboard);
         }
 
 
